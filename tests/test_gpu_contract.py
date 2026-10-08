@@ -19,13 +19,23 @@ def test_pinned_trainer_and_peft_interfaces_execute_on_cpu(tmp_path):
     model=peft.get_peft_model(model,peft.LoraConfig(r=2,lora_alpha=4,target_modules=['q_proj','k_proj','v_proj','o_proj'],task_type='CAUSAL_LM'))
     rows=[{'input_ids':[1,2,3,4,5],'attention_mask':[1]*5,'labels':[-100,-100,3,4,5]}]*4
     from qlora.train import training_options
-    options=training_options(tmp_path,1,False)
+    options=training_options(tmp_path,2,False)
     options.update(use_cpu=True,fp16=False,optim='adamw_torch',gradient_accumulation_steps=1,save_strategy='no')
     args=transformers.TrainingArguments(**options)
     trainer=transformers.Trainer(model=model,args=args,train_dataset=rows,eval_dataset=rows,data_collator=CompletionCollator(0))
-    result=trainer.train()
+    from qlora.telemetry import MemoryTrace,training_profiler
+    callback=MemoryTrace(tmp_path/"memory.jsonl");trainer.add_callback(callback)
+    with training_profiler(torch,tmp_path/"profile",1) as profiler:
+        callback.profiler=profiler
+        result=trainer.train()
     import math
     assert math.isfinite(result.training_loss)
+    import json
+    events=[json.loads(x) for x in (tmp_path/'memory.jsonl').read_text().splitlines()]
+    assert any(x['phase']=='before_optimizer' for x in events)
+    assert all(x['cuda_memory_available'] is False for x in events)
+    assert (tmp_path/'profile/training-trace.json').exists()
+    assert 'traceEvents' in json.loads((tmp_path/'profile/training-trace.json').read_text())
     assert all('lora_' in name for name,p in model.named_parameters() if p.requires_grad)
 
 

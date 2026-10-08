@@ -105,3 +105,13 @@ step 60 and 224 finite nonzero LoRA tensors. It did not replay GPU inference loc
 The exported report lacks a source-commit field, so exact code provenance cannot
 be inferred from it; model revision and dataset hashes are present. Model weights,
 optimizer state and pickle checkpoints are intentionally not committed to Git.
+
+## Memory tracing and optional training profiler
+
+MemoryTrace records allocator allocated/reserved and interval peaks at optimizer begin/end, accumulated microbatch end and before/after optimizer. End-of-step snapshots alone cannot locate every forward/backward peak; the bounded profiler adds operator-level evidence. Allocator bytes exclude CUDA context, some external allocations and other processes; do not equate reserved bytes to used tensor bytes.
+
+```
+python -m qlora.train --steps 60 --eval-cases 16 --profile-steps 2
+```
+
+This saves memory-events.jsonl plus profile/training-trace.json and operator tables. Profiling is off by default, bounded to five optimizer intervals with one warmup; it adds overhead. Report peak is the maximum recorded across intervals and training evaluation, not the last interval after reset. Existing completed GPU results predate instrumentation and are unchanged. New GPU telemetry still requires an actual Colab run; CPU Trainer/profile integration is tested.

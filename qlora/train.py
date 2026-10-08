@@ -1,5 +1,7 @@
 """Real 7B QLoRA experiment. Refuses CPU execution before downloading weights."""
-import argparse,json,time,hashlib,platform,math
+import argparse,json,time,hashlib,platform,math,subprocess
+from importlib.metadata import version
+from contextlib import nullcontext
 from pathlib import Path
 from .data import ROOT,load_rows,score_predictions
 from .encoding import encode_row,prompt_for,CompletionCollator
@@ -17,7 +19,8 @@ def training_options(output_dir, steps, bf16_supported):
     return dict(output_dir=str(output_dir),max_steps=steps,per_device_train_batch_size=1,per_device_eval_batch_size=1,gradient_accumulation_steps=8,learning_rate=2e-4,warmup_steps=max(1,math.ceil(steps*.05)),lr_scheduler_type='cosine',logging_steps=5,eval_strategy='steps',eval_steps=20,save_strategy='steps',save_steps=20,save_total_limit=2,bf16=bf16_supported,fp16=not bf16_supported,gradient_checkpointing=True,optim='paged_adamw_8bit',report_to='none',seed=73,data_seed=73,remove_unused_columns=False)
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--steps',type=int,default=60);parser.add_argument('--eval-cases',type=int,default=16);parser.add_argument('--max-length',type=int,default=768);parser.add_argument('--preflight-only',action='store_true');args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--steps',type=int,default=60);parser.add_argument('--eval-cases',type=int,default=16);parser.add_argument('--max-length',type=int,default=768);parser.add_argument('--profile-steps',type=int,default=0);parser.add_argument('--preflight-only',action='store_true');args=parser.parse_args()
+    if not 0<=args.profile_steps<=min(5,args.steps-1):parser.error("profile-steps must be 0..min(5, steps-1)")
     if not 1<=args.steps<=1000 or not 1<=args.eval_cases<=40 or not 256<=args.max_length<=2048:parser.error('Invalid bounded experiment settings')
     import torch
     hardware=preflight(torch)
@@ -27,6 +30,9 @@ def main():
     set_seed(73);out=ROOT/'runs'/time.strftime('%Y%m%d-%H%M%S');out.mkdir(parents=True)
     dtype=torch.bfloat16 if hardware['bf16_supported'] else torch.float16
     report={'status':'running','model':MODEL,'revision':REVISION,'hardware':hardware,'dtype':str(dtype),'seed':73,'steps':args.steps,'max_length':args.max_length,'python':platform.python_version(),'torch':torch.__version__,'scope':'7B QLoRA on authored synthetic Estonian invoices; no real-contract accuracy claim','dataset_sha256':{name:hashlib.sha256((ROOT/'fixtures'/(name+'.jsonl')).read_bytes()).hexdigest() for name in ['train','validation','test']}}
+    report['dependencies']={name:version(name) for name in ['transformers','peft','bitsandbytes','accelerate']}
+    try:report['source_commit']=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+    except (OSError,subprocess.CalledProcessError):report['source_commit']=None
     def save(): (out/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     save();print(json.dumps({'report':str(out/'report.json'),'hardware':hardware,'dtype':str(dtype)},indent=2),flush=True);started=time.perf_counter()
     try:
@@ -54,11 +60,19 @@ def main():
         trainable=sum(p.numel() for p in model.parameters() if p.requires_grad)
         if not trainable or any(p.requires_grad and 'lora_' not in name for name,p in model.named_parameters()):raise RuntimeError('Unexpected trainable base parameters')
         report['trainable_parameters']=trainable;report['lora']={'rank':16,'alpha':32,'target_modules':['q_proj','k_proj','v_proj','o_proj']};save()
-        trainer=Trainer(model=model,args=arguments,train_dataset=train,eval_dataset=validation,data_collator=CompletionCollator(tokenizer.pad_token_id))
-        torch.cuda.reset_peak_memory_stats();result=trainer.train()
+        from .telemetry import MemoryTrace,training_profiler
+        memory=MemoryTrace(out/'memory-events.jsonl');memory.sample('before_trainer',0)
+        trainer=Trainer(model=model,args=arguments,callbacks=[memory],train_dataset=train,eval_dataset=validation,data_collator=CompletionCollator(tokenizer.pad_token_id))
+        torch.cuda.reset_peak_memory_stats()
+        profiler=training_profiler(torch,out/'profile',args.profile_steps) if args.profile_steps else nullcontext()
+        with profiler as active:
+            memory.profiler=active if args.profile_steps else None
+            result=trainer.train()
+        memory.sample('training_completed',trainer.state.global_step)
         model.save_pretrained(out/'adapter',safe_serialization=True);tokenizer.save_pretrained(out/'adapter')
+        report['telemetry']={'memory_events':'memory-events.jsonl','peak_scope':'maximum of callback interval peaks including training evaluation','profile_steps':args.profile_steps,'profile_overhead_included':bool(args.profile_steps)}
         report['training_metrics']=result.metrics;report['training_history']=trainer.state.log_history
-        report['peak_allocated_gpu_gib']=torch.cuda.max_memory_allocated()/1024**3;report['peak_reserved_gpu_gib']=torch.cuda.max_memory_reserved()/1024**3
+        report['peak_allocated_gpu_gib']=memory.global_peak_allocated/1024**3;report['peak_reserved_gpu_gib']=memory.global_peak_reserved/1024**3
         model.config.use_cache=True;report['adapted']=evaluate_generation(model)
         report['status']='completed';report['elapsed_seconds']=time.perf_counter()-started
         report['adapter_files']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in (out/'adapter').iterdir() if p.is_file()};save()
