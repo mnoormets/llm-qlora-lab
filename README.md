@@ -76,3 +76,6 @@ input files independently, including runs started from the earlier commit.
 
 ## Colab failure visibility and T4 precision
 Native BF16 support is checked with `including_emulation=False`; T4 uses FP16. Colab streams the child-process traceback and saves `runs/colab-training.log`. Failed receipts include the exception message. A generic CalledProcessError alone does not identify the failure cause. These changes were CPU-contract tested; the user GPU retry remains unverified.
+
+## Transformers 5 training arguments
+The first GPU retry loaded the model but failed on removed `warmup_ratio`. Production now uses an explicit integer `warmup_steps` (3 of 60 steps) and constructs TrainingArguments before loading weights. Tests bind every production setting to the pinned Transformers signature and the real CPU Trainer smoke test uses the same options with CPU-only hardware overrides. This verifies API compatibility, not the 7B GPU run.

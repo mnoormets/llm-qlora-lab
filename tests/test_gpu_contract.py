@@ -18,8 +18,11 @@ def test_pinned_trainer_and_peft_interfaces_execute_on_cpu(tmp_path):
     model=transformers.Qwen2ForCausalLM(config)
     model=peft.get_peft_model(model,peft.LoraConfig(r=2,lora_alpha=4,target_modules=['q_proj','k_proj','v_proj','o_proj'],task_type='CAUSAL_LM'))
     rows=[{'input_ids':[1,2,3,4,5],'attention_mask':[1]*5,'labels':[-100,-100,3,4,5]}]*4
-    args=transformers.TrainingArguments(output_dir=str(tmp_path),max_steps=1,per_device_train_batch_size=1,learning_rate=2e-4,report_to='none',save_strategy='no',use_cpu=True,remove_unused_columns=False)
-    trainer=transformers.Trainer(model=model,args=args,train_dataset=rows,data_collator=CompletionCollator(0))
+    from qlora.train import training_options
+    options=training_options(tmp_path,1,False)
+    options.update(use_cpu=True,fp16=False,optim='adamw_torch',gradient_accumulation_steps=1,save_strategy='no')
+    args=transformers.TrainingArguments(**options)
+    trainer=transformers.Trainer(model=model,args=args,train_dataset=rows,eval_dataset=rows,data_collator=CompletionCollator(0))
     result=trainer.train()
     import math
     assert math.isfinite(result.training_loss)
@@ -55,3 +58,20 @@ def test_logged_child_success(tmp_path,capsys):
     assert run_logged([sys.executable,'-u','-c',"print('completed')"],log)==0
     assert log.read_text().strip()=='completed'
     assert 'completed' in capsys.readouterr().out
+
+
+def test_complete_production_arguments_match_pinned_transformers(tmp_path):
+    import inspect
+    transformers=pytest.importorskip('transformers')
+    from qlora.train import training_options
+    for steps in [1,60,61]:
+        for bf16 in [False,True]:
+            options=training_options(tmp_path,steps,bf16)
+            inspect.signature(transformers.TrainingArguments).bind(**options)
+            assert 'warmup_ratio' not in options
+            assert options['warmup_steps']=={1:1,60:3,61:4}[steps]
+            assert options['fp16'] is not bf16
+    options=training_options(tmp_path,60,False)
+    options.update(use_cpu=True,fp16=False)
+    args=transformers.TrainingArguments(**options)
+    assert args.get_warmup_steps(60)==3

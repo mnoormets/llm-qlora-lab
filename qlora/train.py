@@ -1,5 +1,5 @@
 """Real 7B QLoRA experiment. Refuses CPU execution before downloading weights."""
-import argparse,json,time,hashlib,platform
+import argparse,json,time,hashlib,platform,math
 from pathlib import Path
 from .data import ROOT,load_rows,score_predictions
 from .encoding import encode_row,prompt_for,CompletionCollator
@@ -11,6 +11,10 @@ def preflight(torch):
     properties=torch.cuda.get_device_properties(0)
     if properties.total_memory<14*1024**3:raise RuntimeError('At least 14 GiB GPU memory required for the initial 7B configuration')
     return {'name':properties.name,'memory_gib':properties.total_memory/1024**3,'bf16_supported':torch.cuda.is_bf16_supported(including_emulation=False)}
+
+def training_options(output_dir, steps, bf16_supported):
+    """Shared production configuration, validated before model downloading."""
+    return dict(output_dir=str(output_dir),max_steps=steps,per_device_train_batch_size=1,per_device_eval_batch_size=1,gradient_accumulation_steps=8,learning_rate=2e-4,warmup_steps=max(1,math.ceil(steps*.05)),lr_scheduler_type='cosine',logging_steps=5,eval_strategy='steps',eval_steps=20,save_strategy='steps',save_steps=20,save_total_limit=2,bf16=bf16_supported,fp16=not bf16_supported,gradient_checkpointing=True,optim='paged_adamw_8bit',report_to='none',seed=73,data_seed=73,remove_unused_columns=False)
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--steps',type=int,default=60);parser.add_argument('--eval-cases',type=int,default=16);parser.add_argument('--max-length',type=int,default=768);parser.add_argument('--preflight-only',action='store_true');args=parser.parse_args()
@@ -26,6 +30,7 @@ def main():
     def save(): (out/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     save();print(json.dumps({'report':str(out/'report.json'),'hardware':hardware,'dtype':str(dtype)},indent=2),flush=True);started=time.perf_counter()
     try:
+        arguments=TrainingArguments(**training_options(out/'checkpoints',args.steps,hardware['bf16_supported']))
         tokenizer=AutoTokenizer.from_pretrained(MODEL,revision=REVISION,trust_remote_code=False)
         tokenizer.pad_token=tokenizer.eos_token;tokenizer.padding_side='right'
         quant=BitsAndBytesConfig(load_in_4bit=True,bnb_4bit_quant_type='nf4',bnb_4bit_use_double_quant=True,bnb_4bit_compute_dtype=dtype)
@@ -49,7 +54,6 @@ def main():
         trainable=sum(p.numel() for p in model.parameters() if p.requires_grad)
         if not trainable or any(p.requires_grad and 'lora_' not in name for name,p in model.named_parameters()):raise RuntimeError('Unexpected trainable base parameters')
         report['trainable_parameters']=trainable;report['lora']={'rank':16,'alpha':32,'target_modules':['q_proj','k_proj','v_proj','o_proj']};save()
-        arguments=TrainingArguments(output_dir=str(out/'checkpoints'),max_steps=args.steps,per_device_train_batch_size=1,per_device_eval_batch_size=1,gradient_accumulation_steps=8,learning_rate=2e-4,warmup_ratio=.05,lr_scheduler_type='cosine',logging_steps=5,eval_strategy='steps',eval_steps=20,save_strategy='steps',save_steps=20,save_total_limit=2,bf16=hardware['bf16_supported'],fp16=not hardware['bf16_supported'],gradient_checkpointing=True,optim='paged_adamw_8bit',report_to='none',seed=73,data_seed=73,remove_unused_columns=False)
         trainer=Trainer(model=model,args=arguments,train_dataset=train,eval_dataset=validation,data_collator=CompletionCollator(tokenizer.pad_token_id))
         torch.cuda.reset_peak_memory_stats();result=trainer.train()
         model.save_pretrained(out/'adapter',safe_serialization=True);tokenizer.save_pretrained(out/'adapter')
