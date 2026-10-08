@@ -1,0 +1,13 @@
+{
+  "scope": "480 authored synthetic invoices. Disjoint entities; validation/test use held-out wording templates. Not real financial data or independent human-labelled evaluation.",
+  "counts": {
+    "train": 400,
+    "validation": 40,
+    "test": 40
+  },
+  "sha256": {
+    "train": "7f28686b43e07e44be8620a7c25a826b355f5bae196d0f87b0696b517f020844",
+    "validation": "d96027eebf7388175d48cc2a2f8852c48f64fc71bf85d64224fd323ca87f0910",
+    "test": "cb3ac05094757ad918e5e5d32cb316b68b0e01873902d6a7bfcfb46760354bd8"
+  }
+}
