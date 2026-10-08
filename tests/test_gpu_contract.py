@@ -24,3 +24,34 @@ def test_pinned_trainer_and_peft_interfaces_execute_on_cpu(tmp_path):
     import math
     assert math.isfinite(result.training_loss)
     assert all('lora_' in name for name,p in model.named_parameters() if p.requires_grad)
+
+
+def test_t4_uses_native_bf16_check_not_emulation():
+    from types import SimpleNamespace
+    from qlora.train import preflight
+    calls=[]
+    def bf16(*,including_emulation):
+        calls.append(including_emulation)
+        return including_emulation
+    cuda=SimpleNamespace(is_available=lambda:True,get_device_properties=lambda _:SimpleNamespace(name='Tesla T4',total_memory=15*1024**3),is_bf16_supported=bf16)
+    assert preflight(SimpleNamespace(cuda=cuda))['bf16_supported'] is False
+    assert calls==[False]
+
+
+def test_child_failure_keeps_actual_traceback(tmp_path,capsys):
+    import sys
+    from qlora.runtime import run_logged
+    log=tmp_path/'failed.log'
+    with pytest.raises(RuntimeError,match='status 1'):
+        run_logged([sys.executable,'-u','-c',"raise ValueError('actual training failure')"],log)
+    assert 'ValueError: actual training failure' in log.read_text()
+    assert 'ValueError: actual training failure' in capsys.readouterr().out
+
+
+def test_logged_child_success(tmp_path,capsys):
+    import sys
+    from qlora.runtime import run_logged
+    log=tmp_path/'success.log'
+    assert run_logged([sys.executable,'-u','-c',"print('completed')"],log)==0
+    assert log.read_text().strip()=='completed'
+    assert 'completed' in capsys.readouterr().out

@@ -73,3 +73,6 @@ Dataset files use explicit LF line endings so committed-file hashes match on
 Windows and Linux. This fixes the first manifest's platform-dependent line-ending
 hashes; document text and labels are unchanged. Training receipts hash the actual
 input files independently, including runs started from the earlier commit.
+
+## Colab failure visibility and T4 precision
+Native BF16 support is checked with `including_emulation=False`; T4 uses FP16. Colab streams the child-process traceback and saves `runs/colab-training.log`. Failed receipts include the exception message. A generic CalledProcessError alone does not identify the failure cause. These changes were CPU-contract tested; the user GPU retry remains unverified.

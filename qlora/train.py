@@ -10,7 +10,7 @@ def preflight(torch):
     if not torch.cuda.is_available():raise RuntimeError('CUDA GPU required. No weights downloaded; no training result claimed.')
     properties=torch.cuda.get_device_properties(0)
     if properties.total_memory<14*1024**3:raise RuntimeError('At least 14 GiB GPU memory required for the initial 7B configuration')
-    return {'name':properties.name,'memory_gib':properties.total_memory/1024**3,'bf16_supported':torch.cuda.is_bf16_supported()}
+    return {'name':properties.name,'memory_gib':properties.total_memory/1024**3,'bf16_supported':torch.cuda.is_bf16_supported(including_emulation=False)}
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--steps',type=int,default=60);parser.add_argument('--eval-cases',type=int,default=16);parser.add_argument('--max-length',type=int,default=768);parser.add_argument('--preflight-only',action='store_true');args=parser.parse_args()
@@ -24,7 +24,7 @@ def main():
     dtype=torch.bfloat16 if hardware['bf16_supported'] else torch.float16
     report={'status':'running','model':MODEL,'revision':REVISION,'hardware':hardware,'dtype':str(dtype),'seed':73,'steps':args.steps,'max_length':args.max_length,'python':platform.python_version(),'torch':torch.__version__,'scope':'7B QLoRA on authored synthetic Estonian invoices; no real-contract accuracy claim','dataset_sha256':{name:hashlib.sha256((ROOT/'fixtures'/(name+'.jsonl')).read_bytes()).hexdigest() for name in ['train','validation','test']}}
     def save(): (out/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
-    save();started=time.perf_counter()
+    save();print(json.dumps({'report':str(out/'report.json'),'hardware':hardware,'dtype':str(dtype)},indent=2),flush=True);started=time.perf_counter()
     try:
         tokenizer=AutoTokenizer.from_pretrained(MODEL,revision=REVISION,trust_remote_code=False)
         tokenizer.pad_token=tokenizer.eos_token;tokenizer.padding_side='right'
@@ -62,5 +62,5 @@ def main():
     except torch.cuda.OutOfMemoryError:
         report.update(status='failed_cuda_oom',elapsed_seconds=time.perf_counter()-started,recovery='Restart runtime; reduce max-length to 512. Keep batch size 1. Do not edit measured results.');save();raise
     except Exception as error:
-        report.update(status='failed',error_type=type(error).__name__,elapsed_seconds=time.perf_counter()-started);save();raise
+        report.update(status='failed',error_type=type(error).__name__,error_message=str(error),elapsed_seconds=time.perf_counter()-started);save();raise
 if __name__=='__main__':main()

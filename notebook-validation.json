@@ -2,7 +2,9 @@
   "notebook_format_valid": true,
   "top_to_bottom_cpu_contract_execution": true,
   "gpu_training_executed": false,
-  "gpu_skip_reason": "No local CUDA device; actual training requires Colab GPU",
+  "gpu_skip_reason": "No local CUDA device; actual GPU retry remains unverified",
   "code_cells": 6,
-  "error_outputs": 0
+  "error_outputs": 0,
+  "precision_regression_test": "native BF16 only; T4 FP16",
+  "training_log_contract": "stderr streamed and persisted"
 }
