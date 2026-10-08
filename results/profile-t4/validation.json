@@ -1,0 +1,92 @@
+{
+  "archive_sha256": "bcec73883046a1ad454583ad59c8fac34d2052b92a0050b3a6c8e678cab2cea5",
+  "source_commit": "e095fc7349358c30c8000e9fe11a66eaa6bcc2f3",
+  "artifact_hashes_verified": true,
+  "dataset_hashes_verified": true,
+  "checkpoint_global_step": 60,
+  "adapter_tensor_count": 224,
+  "adapter_parameters": 10092544,
+  "adapter_tensors_finite": true,
+  "scores_recomputed": {
+    "baseline": {
+      "cases": 16,
+      "valid_json_fraction": 0.0,
+      "exact_match_fraction": 0.0,
+      "field_accuracy": 0.0
+    },
+    "adapted": {
+      "cases": 16,
+      "valid_json_fraction": 1.0,
+      "exact_match_fraction": 1.0,
+      "field_accuracy": 1.0
+    }
+  },
+  "baseline_fence_stripping_diagnostic": {
+    "cases": 16,
+    "valid_json_fraction": 0.9375,
+    "exact_match_fraction": 0.8125,
+    "field_accuracy": 0.90625
+  },
+  "memory": {
+    "event_count": 665,
+    "phase_counts": {
+      "before_trainer": 1,
+      "optimizer_interval_begin": 60,
+      "accumulated_microbatch_end": 420,
+      "before_optimizer": 60,
+      "after_optimizer": 60,
+      "optimizer_interval_end": 60,
+      "evaluation_end": 3,
+      "training_completed": 1
+    },
+    "all_60_optimizer_steps_present": true,
+    "peak_allocated_gib": 8.773004055023193,
+    "peak_reserved_gib": 9.54296875,
+    "scope": "PyTorch allocator interval peaks, not total device VRAM"
+  },
+  "profile": {
+    "file_bytes": 706351354,
+    "trace_events": 2068683,
+    "category_counts": {
+      "cpu_op": 821102,
+      "fwdbwd": 117648,
+      "cpu_instant_event": 337840,
+      "user_annotation": 20,
+      "cuda_runtime": 213160,
+      "ac2g": 395974,
+      "gpu_memcpy": 4628,
+      "kernel": 166802,
+      "gpu_memset": 3488,
+      "cuda_driver": 7896,
+      "overhead": 58,
+      "gpu_user_annotation": 4,
+      "uncategorized": 62,
+      "Trace": 1
+    },
+    "summed_event_duration_ms": {
+      "cpu_op": 40734.798328000375,
+      "user_annotation": 14530.156186999999,
+      "cuda_runtime": 1987.6312340000502,
+      "gpu_memcpy": 40.31035599999993,
+      "kernel": 12057.48803299989,
+      "gpu_memset": 4.0934890000000665,
+      "cuda_driver": 84.08954100000052,
+      "overhead": 57.12508399999999,
+      "gpu_user_annotation": 14504.741104,
+      "Trace": 14471.012191
+    },
+    "profiler_step_names": [
+      "ProfilerStep#1",
+      "ProfilerStep#2",
+      "ProfilerStep#2",
+      "ProfilerStep#1"
+    ],
+    "scope": "Two optimizer intervals with profiler overhead; overlapping event durations are not wall-clock shares"
+  },
+  "limitations": [
+    "16 synthetic test cases; no independent real-document validation",
+    "No local GPU inference replay",
+    "No multi-GPU, AWQ or serving benchmark demonstrated",
+    "Profiler adds overhead; no controlled speedup comparison"
+  ]
+}
