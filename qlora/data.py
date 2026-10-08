@@ -41,7 +41,7 @@ def prepare():
     splits={'train':[make_row(i,i%3) for i in range(400)],'validation':[make_row(i,3) for i in range(400,440)],'test':[make_row(i,4+i%2) for i in range(440,480)]}
     manifest={'scope':'480 authored synthetic invoices. Disjoint entities; validation/test use held-out wording templates. Not real financial data or independent human-labelled evaluation.','counts':{},'sha256':{}}
     for name,rows in splits.items():
-        raw=''.join(json.dumps(row,ensure_ascii=False)+'\n' for row in rows);path=target/(name+'.jsonl');path.write_text(raw,encoding='utf-8')
+        raw=''.join(json.dumps(row,ensure_ascii=False)+'\n' for row in rows);path=target/(name+'.jsonl');path.write_text(raw,encoding='utf-8',newline='\n')
         manifest['counts'][name]=len(rows);manifest['sha256'][name]=hashlib.sha256(path.read_bytes()).hexdigest()
     (target/'manifest.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8');return manifest
 

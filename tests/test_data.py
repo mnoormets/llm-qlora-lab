@@ -36,3 +36,18 @@ def test_preflight_stops_before_model_download():
         def is_available(self):return False
     class Torch:cuda=Cuda()
     with pytest.raises(RuntimeError,match='No weights downloaded'):preflight(Torch())
+
+
+def test_fixture_hashes_match_published_manifest():
+    import hashlib
+    from qlora.data import ROOT
+    manifest=json.loads((ROOT/'fixtures/manifest.json').read_text(encoding='utf-8'))
+    for name in ['train','validation','test']:
+        assert hashlib.sha256((ROOT/'fixtures'/(name+'.jsonl')).read_bytes()).hexdigest()==manifest['sha256'][name]
+
+def test_actual_split_templates_and_document_ids_are_disjoint():
+    from qlora.data import ROOT,load_rows
+    sets={name:load_rows(ROOT/'fixtures'/(name+'.jsonl')) for name in ['train','validation','test']}
+    for first,second in [('train','validation'),('train','test'),('validation','test')]:
+        assert not {r['id'] for r in sets[first]} & {r['id'] for r in sets[second]}
+        assert not {r['template'] for r in sets[first]} & {r['template'] for r in sets[second]}

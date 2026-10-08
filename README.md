@@ -53,7 +53,7 @@ never a token embedded in the notebook or committed to Git.
 
 ## Validation so far
 
-11 local CPU tests passed, including schema failures, split IDs, completion masks,
+13 local CPU tests passed, including schema failures, split IDs, completion masks,
 padding/EOS labels, GPU fail-closed preflight and an actual one-step Trainer/PEFT
 interface check on a randomly initialized small model. That last check validates
 API compatibility only. It is not the 7B experiment. GPU quantization, training,
@@ -67,3 +67,9 @@ Sources: [PEFT quantization](https://huggingface.co/docs/peft/developer_guides/q
 Notebook format and top-to-bottom CPU contract execution were verified with a
 fresh Jupyter kernel; all six code cells completed without errors. GPU cells were
 explicitly skipped. See notebook-validation.json; this does not validate a GPU run.
+
+
+Dataset files use explicit LF line endings so committed-file hashes match on
+Windows and Linux. This fixes the first manifest's platform-dependent line-ending
+hashes; document text and labels are unchanged. Training receipts hash the actual
+input files independently, including runs started from the earlier commit.
