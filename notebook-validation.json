@@ -1,0 +1,8 @@
+{
+  "notebook_format_valid": true,
+  "top_to_bottom_cpu_contract_execution": true,
+  "gpu_training_executed": false,
+  "gpu_skip_reason": "No local CUDA device; actual training requires Colab GPU",
+  "code_cells": 6,
+  "error_outputs": 0
+}

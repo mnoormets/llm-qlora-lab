@@ -62,3 +62,8 @@ adapter performance and Hub publication remain unverified until the Colab run.
 Sources: [PEFT quantization](https://huggingface.co/docs/peft/developer_guides/quantization),
 [Transformers Trainer](https://huggingface.co/docs/transformers/main_classes/trainer),
 [Qwen model card](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct).
+
+
+Notebook format and top-to-bottom CPU contract execution were verified with a
+fresh Jupyter kernel; all six code cells completed without errors. GPU cells were
+explicitly skipped. See notebook-validation.json; this does not validate a GPU run.
