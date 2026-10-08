@@ -53,11 +53,11 @@ never a token embedded in the notebook or committed to Git.
 
 ## Validation so far
 
-13 local CPU tests passed, including schema failures, split IDs, completion masks,
+17 local CPU tests passed, including schema failures, split IDs, completion masks,
 padding/EOS labels, GPU fail-closed preflight and an actual one-step Trainer/PEFT
 interface check on a randomly initialized small model. That last check validates
-API compatibility only. It is not the 7B experiment. GPU quantization, training,
-adapter performance and Hub publication remain unverified until the Colab run.
+API compatibility only. It is not the 7B experiment. The imported Colab GPU run is now artifact-verified as described below. Hub
+publication and an independent inference reload remain unverified.
 
 Sources: [PEFT quantization](https://huggingface.co/docs/peft/developer_guides/quantization),
 [Transformers Trainer](https://huggingface.co/docs/transformers/main_classes/trainer),
@@ -75,7 +75,33 @@ hashes; document text and labels are unchanged. Training receipts hash the actua
 input files independently, including runs started from the earlier commit.
 
 ## Colab failure visibility and T4 precision
-Native BF16 support is checked with `including_emulation=False`; T4 uses FP16. Colab streams the child-process traceback and saves `runs/colab-training.log`. Failed receipts include the exception message. A generic CalledProcessError alone does not identify the failure cause. These changes were CPU-contract tested; the user GPU retry remains unverified.
+Native BF16 support is checked with `including_emulation=False`; T4 uses FP16. Colab streams the child-process traceback and saves `runs/colab-training.log`. Failed receipts include the exception message. A generic CalledProcessError alone does not identify the failure cause. These changes were CPU-contract tested; the subsequent GPU retry completed; imported artifacts were inspected.
 
 ## Transformers 5 training arguments
-The first GPU retry loaded the model but failed on removed `warmup_ratio`. Production now uses an explicit integer `warmup_steps` (3 of 60 steps) and constructs TrainingArguments before loading weights. Tests bind every production setting to the pinned Transformers signature and the real CPU Trainer smoke test uses the same options with CPU-only hardware overrides. This verifies API compatibility, not the 7B GPU run.
+The first GPU retry loaded the model but failed on removed `warmup_ratio`. Production now uses an explicit integer `warmup_steps` (3 of 60 steps) and constructs TrainingArguments before loading weights. Tests bind every production setting to the pinned Transformers signature and the real CPU Trainer smoke test uses the same options with CPU-only hardware overrides. These tests verify API compatibility. The separately imported GPU run is described below.
+
+## Completed Colab GPU experiment
+
+Actual exported receipt: [results/colab-report.json](results/colab-report.json).
+Artifact inspection and independently recomputed saved-prediction metrics:
+[results/artifact-validation.json](results/artifact-validation.json).
+
+- Qwen2.5-7B-Instruct, pinned revision; NF4 QLoRA on Tesla T4, FP16.
+- 60 optimizer steps, 400 authored training invoices; 10,092,544 LoRA parameters.
+- Training runtime: 528.3 seconds. Full recorded experiment: 732.7 seconds.
+- Peak allocated GPU memory: 8.773 GiB; peak reserved: 9.520 GiB.
+- Adapter: 16/16 exact schema-compliant outputs on the fixed synthetic test subset.
+- Strict baseline: 0/16 schema-compliant exact outputs. It generally returned
+  Markdown-wrapped JSON, which the strict production contract rejects.
+- Diagnostic after stripping only outer Markdown fences: baseline 13/16 exact,
+  15/16 schema-valid and 90.625% field accuracy. Adapter: 16/16 exact and valid.
+  This diagnostic was computed after the experiment and did not change training.
+
+This demonstrates a functioning GPU fine-tuning pipeline and improvement on a
+small synthetic extraction/format-following task. It is not 100% real-document
+accuracy, broad superiority over the base model, or evidence of production scale.
+The validator checked dataset hashes, all exported adapter-file hashes, checkpoint
+step 60 and 224 finite nonzero LoRA tensors. It did not replay GPU inference locally.
+The exported report lacks a source-commit field, so exact code provenance cannot
+be inferred from it; model revision and dataset hashes are present. Model weights,
+optimizer state and pickle checkpoints are intentionally not committed to Git.

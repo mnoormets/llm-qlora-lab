@@ -1,0 +1,38 @@
+{
+  "archive_sha256": "5d07d027f35eaf9d5c8f95b27f5a3c8671b9f72d8830957bdc960079cb25b81e",
+  "report_sha256": "921a68ad3fa6e442be79568b54a4dcc1a0b7e40feeeda6d722b908d06294c6de",
+  "adapter_sha256": "0698ed7fcae07e57c1cb236ff93cb948756a96bdf75d6d3e1b2292687f844f2c",
+  "artifact_hashes_verified": true,
+  "dataset_hashes_verified": true,
+  "checkpoint_global_step": 60,
+  "adapter_tensor_count": 224,
+  "adapter_parameters": 10092544,
+  "adapter_tensors_finite": true,
+  "adapter_nonzero_values": 10092544,
+  "scores_recomputed": {
+    "baseline": {
+      "cases": 16,
+      "valid_json_fraction": 0.0,
+      "exact_match_fraction": 0.0,
+      "field_accuracy": 0.0
+    },
+    "adapted": {
+      "cases": 16,
+      "valid_json_fraction": 1.0,
+      "exact_match_fraction": 1.0,
+      "field_accuracy": 1.0
+    }
+  },
+  "baseline_fence_stripping_diagnostic": {
+    "cases": 16,
+    "valid_json_fraction": 0.9375,
+    "exact_match_fraction": 0.8125,
+    "field_accuracy": 0.90625
+  },
+  "limitations": [
+    "16 authored synthetic test cases, not independent real-document validation",
+    "Strict baseline score rejects Markdown code fences; diagnostic strips only outer fences",
+    "Artifact inspection and score recomputation; no local GPU replay or base-model/adapter inference reload",
+    "No source commit recorded in imported report; do not claim exact source provenance beyond verified data/model hashes"
+  ]
+}

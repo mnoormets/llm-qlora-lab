@@ -1,0 +1,687 @@
+{
+  "status": "completed",
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "hardware": {
+    "name": "Tesla T4",
+    "memory_gib": 14.56317138671875,
+    "bf16_supported": false
+  },
+  "dtype": "torch.float16",
+  "seed": 73,
+  "steps": 60,
+  "max_length": 768,
+  "python": "3.13.15",
+  "torch": "2.11.0+cu130",
+  "scope": "7B QLoRA on authored synthetic Estonian invoices; no real-contract accuracy claim",
+  "dataset_sha256": {
+    "train": "021fc3e31446763e2758b7fe8134007c9ce58176fc7bec4cd2975b09840c3961",
+    "validation": "2396bb761cfca39b544266db264ff5fef0da3ef5db8479194d835078343f4fda",
+    "test": "24aa24a2c933084069ec982c0987f7c315e17f5ab4db81b7f7726add1a957e75"
+  },
+  "baseline": {
+    "cases": 16,
+    "valid_json_fraction": 0.0,
+    "exact_match_fraction": 0.0,
+    "field_accuracy": 0.0,
+    "details": [
+      {
+        "id": "ROW-00440",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00440\",\n  \"amount\": \"460.40\",\n  \"currency\": \"USD\",\n  \"due_date\": \"2027-07-10\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00440",
+          "amount": "460.40",
+          "currency": "USD",
+          "due_date": "2027-07-10"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00441",
+        "prediction": "```json\n{\n  \"reference\": \"Näidis-00441\",\n  \"amount\": \"461.41\",\n  \"currency\": \"EUR\",\n  \"due_date\": \"2027-07-11\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": null,
+          "amount": "461.41",
+          "currency": "EUR",
+          "due_date": "2027-07-11"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00442",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00442\",\n  \"amount\": null,\n  \"currency\": null,\n  \"due_date\": \"2027-07-12\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00442",
+          "amount": null,
+          "currency": null,
+          "due_date": "2027-07-12"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00443",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00443\",\n  \"amount\": \"463.43\",\n  \"currency\": \"EUR\",\n  \"due_date\": null\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00443",
+          "amount": "463.43",
+          "currency": "EUR",
+          "due_date": null
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00444",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00444\",\n  \"amount\": \"464.44\",\n  \"currency\": \"USD\",\n  \"due_date\": \"2027-07-14\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00444",
+          "amount": "464.44",
+          "currency": "USD",
+          "due_date": "2027-07-14"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00445",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00445\",\n  \"amount\": \"465.45\",\n  \"currency\": \"EUR\",\n  \"due_date\": \"2027-07-15\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00445",
+          "amount": "465.45",
+          "currency": "EUR",
+          "due_date": "2027-07-15"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00446",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00446\",\n  \"amount\": \"466.46\",\n  \"currency\": \"USD\",\n  \"due_date\": \"2027-07-16\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00446",
+          "amount": "466.46",
+          "currency": "USD",
+          "due_date": "2027-07-16"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00447",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00447\",\n  \"amount\": \"467.47\",\n  \"currency\": \"EUR\",\n  \"due_date\": \"2027-07-17\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00447",
+          "amount": "467.47",
+          "currency": "EUR",
+          "due_date": "2027-07-17"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00448",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00448\",\n  \"amount\": \"468.48\",\n  \"currency\": \"USD\",\n  \"due_date\": \"2027-07-18\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00448",
+          "amount": "468.48",
+          "currency": "USD",
+          "due_date": "2027-07-18"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00449",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00449\",\n  \"amount\": \"469.49\",\n  \"currency\": \"EUR\",\n  \"due_date\": \"2027-07-19\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00449",
+          "amount": "469.49",
+          "currency": "EUR",
+          "due_date": "2027-07-19"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00450",
+        "prediction": "```json\n{\n  \"reference\": \"Näidis-00450\",\n  \"amount\": \"470.50\",\n  \"currency\": \"USD\",\n  \"due_date\": \"2027-07-20\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": null,
+          "amount": "470.50",
+          "currency": "USD",
+          "due_date": "2027-07-20"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00451",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00451\",\n  \"amount\": \"123.45\",  // This amount is assumed as it was explicitly requested to be different and no specific amount was provided in the document text.\n  \"currency\": \"EUR\",\n  \"due_date\": \"2027-07-21\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00451",
+          "amount": null,
+          "currency": null,
+          "due_date": "2027-07-21"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00452",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00452\",\n  \"amount\": \"472.52\",\n  \"currency\": \"USD\",\n  \"due_date\": null\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00452",
+          "amount": "472.52",
+          "currency": "USD",
+          "due_date": null
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00453",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00453\",\n  \"amount\": \"473.53\",\n  \"currency\": \"EUR\",\n  \"due_date\": \"2027-07-23\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00453",
+          "amount": "473.53",
+          "currency": "EUR",
+          "due_date": "2027-07-23"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00454",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00454\",\n  \"amount\": \"474.54\",\n  \"currency\": \"USD\",\n  \"due_date\": \"2027-07-24\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00454",
+          "amount": "474.54",
+          "currency": "USD",
+          "due_date": "2027-07-24"
+        },
+        "exact_match": false
+      },
+      {
+        "id": "ROW-00455",
+        "prediction": "```json\n{\n  \"reference\": \"DEMO-00455\",\n  \"amount\": \"475.55\",\n  \"currency\": \"EUR\",\n  \"due_date\": \"2027-07-25\"\n}\n```",
+        "parsed": null,
+        "expected": {
+          "reference": "DEMO-00455",
+          "amount": "475.55",
+          "currency": "EUR",
+          "due_date": "2027-07-25"
+        },
+        "exact_match": false
+      }
+    ],
+    "generation_seconds": [
+      5.171232293999992,
+      3.598504864000006,
+      3.637590186999887,
+      2.8939519099999416,
+      3.6189100110000254,
+      3.8929356659998575,
+      3.790263164999942,
+      3.654572125999948,
+      3.667778021999993,
+      4.179392532999827,
+      3.551356379000026,
+      5.084527117999642,
+      3.496501544000239,
+      3.55091867200008,
+      3.494484392999766,
+      4.210970145999909
+    ]
+  },
+  "trainable_parameters": 10092544,
+  "lora": {
+    "rank": 16,
+    "alpha": 32,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ]
+  },
+  "training_metrics": {
+    "train_runtime": 528.3054,
+    "train_samples_per_second": 0.909,
+    "train_steps_per_second": 0.114,
+    "total_flos": 3544547621314560.0,
+    "train_loss": 0.013986126717706307,
+    "epoch": 1.2
+  },
+  "training_history": [
+    {
+      "loss": 0.16275304555892944,
+      "grad_norm": 0.03417307510972023,
+      "learning_rate": 0.00019984815164333163,
+      "epoch": 0.1,
+      "step": 5
+    },
+    {
+      "loss": 0.0018262643367052077,
+      "grad_norm": 0.19331970810890198,
+      "learning_rate": 0.00019458172417006347,
+      "epoch": 0.2,
+      "step": 10
+    },
+    {
+      "loss": 0.0026646444573998453,
+      "grad_norm": 0.3907168507575989,
+      "learning_rate": 0.0001821777815225245,
+      "epoch": 0.3,
+      "step": 15
+    },
+    {
+      "loss": 0.0003238321747630835,
+      "grad_norm": 0.042170941829681396,
+      "learning_rate": 0.00016357237482099684,
+      "epoch": 0.4,
+      "step": 20
+    },
+    {
+      "eval_loss": 0.00020174037490505725,
+      "eval_runtime": 15.2443,
+      "eval_samples_per_second": 2.624,
+      "eval_steps_per_second": 2.624,
+      "epoch": 0.4,
+      "step": 20
+    },
+    {
+      "loss": 0.0002102639526128769,
+      "grad_norm": 0.0021196268498897552,
+      "learning_rate": 0.00014016954246529696,
+      "epoch": 0.5,
+      "step": 25
+    },
+    {
+      "loss": 1.809561508707702e-05,
+      "grad_norm": 0.0007191327167674899,
+      "learning_rate": 0.00011373535578184082,
+      "epoch": 0.6,
+      "step": 30
+    },
+    {
+      "loss": 1.2593537394423038e-05,
+      "grad_norm": 0.0005474290228448808,
+      "learning_rate": 8.626464421815919e-05,
+      "epoch": 0.7,
+      "step": 35
+    },
+    {
+      "loss": 6.116470467532054e-06,
+      "grad_norm": 0.0003649474529083818,
+      "learning_rate": 5.983045753470308e-05,
+      "epoch": 0.8,
+      "step": 40
+    },
+    {
+      "eval_loss": 4.545748197415378e-06,
+      "eval_runtime": 15.5687,
+      "eval_samples_per_second": 2.569,
+      "eval_steps_per_second": 2.569,
+      "epoch": 0.8,
+      "step": 40
+    },
+    {
+      "loss": 5.013974077883176e-06,
+      "grad_norm": 0.00021983169426675886,
+      "learning_rate": 3.642762517900322e-05,
+      "epoch": 0.9,
+      "step": 45
+    },
+    {
+      "loss": 4.505669130594469e-06,
+      "grad_norm": 0.00023282297479454428,
+      "learning_rate": 1.7822218477475494e-05,
+      "epoch": 1.0,
+      "step": 50
+    },
+    {
+      "loss": 4.979079676559195e-06,
+      "grad_norm": 0.000305340567138046,
+      "learning_rate": 5.418275829936537e-06,
+      "epoch": 1.1,
+      "step": 55
+    },
+    {
+      "loss": 4.1657862311694774e-06,
+      "grad_norm": 0.0002659658493939787,
+      "learning_rate": 1.518483566683826e-07,
+      "epoch": 1.2,
+      "step": 60
+    },
+    {
+      "eval_loss": 3.987603122368455e-06,
+      "eval_runtime": 15.3687,
+      "eval_samples_per_second": 2.603,
+      "eval_steps_per_second": 2.603,
+      "epoch": 1.2,
+      "step": 60
+    },
+    {
+      "train_runtime": 528.3054,
+      "train_samples_per_second": 0.909,
+      "train_steps_per_second": 0.114,
+      "total_flos": 3544547621314560.0,
+      "train_loss": 0.013986126717706307,
+      "epoch": 1.2,
+      "step": 60
+    }
+  ],
+  "peak_allocated_gpu_gib": 8.773004055023193,
+  "peak_reserved_gpu_gib": 9.51953125,
+  "adapted": {
+    "cases": 16,
+    "valid_json_fraction": 1.0,
+    "exact_match_fraction": 1.0,
+    "field_accuracy": 1.0,
+    "details": [
+      {
+        "id": "ROW-00440",
+        "prediction": "{\"reference\": \"DEMO-00440\", \"amount\": \"460.40\", \"currency\": \"USD\", \"due_date\": \"2027-07-10\"}",
+        "parsed": {
+          "reference": "DEMO-00440",
+          "amount": "460.40",
+          "currency": "USD",
+          "due_date": "2027-07-10"
+        },
+        "expected": {
+          "reference": "DEMO-00440",
+          "amount": "460.40",
+          "currency": "USD",
+          "due_date": "2027-07-10"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00441",
+        "prediction": "{\"reference\": null, \"amount\": \"461.41\", \"currency\": \"EUR\", \"due_date\": \"2027-07-11\"}",
+        "parsed": {
+          "reference": null,
+          "amount": "461.41",
+          "currency": "EUR",
+          "due_date": "2027-07-11"
+        },
+        "expected": {
+          "reference": null,
+          "amount": "461.41",
+          "currency": "EUR",
+          "due_date": "2027-07-11"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00442",
+        "prediction": "{\"reference\": \"DEMO-00442\", \"amount\": null, \"currency\": null, \"due_date\": \"2027-07-12\"}",
+        "parsed": {
+          "reference": "DEMO-00442",
+          "amount": null,
+          "currency": null,
+          "due_date": "2027-07-12"
+        },
+        "expected": {
+          "reference": "DEMO-00442",
+          "amount": null,
+          "currency": null,
+          "due_date": "2027-07-12"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00443",
+        "prediction": "{\"reference\": \"DEMO-00443\", \"amount\": \"463.43\", \"currency\": \"EUR\", \"due_date\": null}",
+        "parsed": {
+          "reference": "DEMO-00443",
+          "amount": "463.43",
+          "currency": "EUR",
+          "due_date": null
+        },
+        "expected": {
+          "reference": "DEMO-00443",
+          "amount": "463.43",
+          "currency": "EUR",
+          "due_date": null
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00444",
+        "prediction": "{\"reference\": \"DEMO-00444\", \"amount\": \"464.44\", \"currency\": \"USD\", \"due_date\": \"2027-07-14\"}",
+        "parsed": {
+          "reference": "DEMO-00444",
+          "amount": "464.44",
+          "currency": "USD",
+          "due_date": "2027-07-14"
+        },
+        "expected": {
+          "reference": "DEMO-00444",
+          "amount": "464.44",
+          "currency": "USD",
+          "due_date": "2027-07-14"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00445",
+        "prediction": "{\"reference\": \"DEMO-00445\", \"amount\": \"465.45\", \"currency\": \"EUR\", \"due_date\": \"2027-07-15\"}",
+        "parsed": {
+          "reference": "DEMO-00445",
+          "amount": "465.45",
+          "currency": "EUR",
+          "due_date": "2027-07-15"
+        },
+        "expected": {
+          "reference": "DEMO-00445",
+          "amount": "465.45",
+          "currency": "EUR",
+          "due_date": "2027-07-15"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00446",
+        "prediction": "{\"reference\": \"DEMO-00446\", \"amount\": \"466.46\", \"currency\": \"USD\", \"due_date\": \"2027-07-16\"}",
+        "parsed": {
+          "reference": "DEMO-00446",
+          "amount": "466.46",
+          "currency": "USD",
+          "due_date": "2027-07-16"
+        },
+        "expected": {
+          "reference": "DEMO-00446",
+          "amount": "466.46",
+          "currency": "USD",
+          "due_date": "2027-07-16"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00447",
+        "prediction": "{\"reference\": \"DEMO-00447\", \"amount\": \"467.47\", \"currency\": \"EUR\", \"due_date\": \"2027-07-17\"}",
+        "parsed": {
+          "reference": "DEMO-00447",
+          "amount": "467.47",
+          "currency": "EUR",
+          "due_date": "2027-07-17"
+        },
+        "expected": {
+          "reference": "DEMO-00447",
+          "amount": "467.47",
+          "currency": "EUR",
+          "due_date": "2027-07-17"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00448",
+        "prediction": "{\"reference\": \"DEMO-00448\", \"amount\": \"468.48\", \"currency\": \"USD\", \"due_date\": \"2027-07-18\"}",
+        "parsed": {
+          "reference": "DEMO-00448",
+          "amount": "468.48",
+          "currency": "USD",
+          "due_date": "2027-07-18"
+        },
+        "expected": {
+          "reference": "DEMO-00448",
+          "amount": "468.48",
+          "currency": "USD",
+          "due_date": "2027-07-18"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00449",
+        "prediction": "{\"reference\": \"DEMO-00449\", \"amount\": \"469.49\", \"currency\": \"EUR\", \"due_date\": \"2027-07-19\"}",
+        "parsed": {
+          "reference": "DEMO-00449",
+          "amount": "469.49",
+          "currency": "EUR",
+          "due_date": "2027-07-19"
+        },
+        "expected": {
+          "reference": "DEMO-00449",
+          "amount": "469.49",
+          "currency": "EUR",
+          "due_date": "2027-07-19"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00450",
+        "prediction": "{\"reference\": null, \"amount\": \"470.50\", \"currency\": \"USD\", \"due_date\": \"2027-07-20\"}",
+        "parsed": {
+          "reference": null,
+          "amount": "470.50",
+          "currency": "USD",
+          "due_date": "2027-07-20"
+        },
+        "expected": {
+          "reference": null,
+          "amount": "470.50",
+          "currency": "USD",
+          "due_date": "2027-07-20"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00451",
+        "prediction": "{\"reference\": \"DEMO-00451\", \"amount\": null, \"currency\": null, \"due_date\": \"2027-07-21\"}",
+        "parsed": {
+          "reference": "DEMO-00451",
+          "amount": null,
+          "currency": null,
+          "due_date": "2027-07-21"
+        },
+        "expected": {
+          "reference": "DEMO-00451",
+          "amount": null,
+          "currency": null,
+          "due_date": "2027-07-21"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00452",
+        "prediction": "{\"reference\": \"DEMO-00452\", \"amount\": \"472.52\", \"currency\": \"USD\", \"due_date\": null}",
+        "parsed": {
+          "reference": "DEMO-00452",
+          "amount": "472.52",
+          "currency": "USD",
+          "due_date": null
+        },
+        "expected": {
+          "reference": "DEMO-00452",
+          "amount": "472.52",
+          "currency": "USD",
+          "due_date": null
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00453",
+        "prediction": "{\"reference\": \"DEMO-00453\", \"amount\": \"473.53\", \"currency\": \"EUR\", \"due_date\": \"2027-07-23\"}",
+        "parsed": {
+          "reference": "DEMO-00453",
+          "amount": "473.53",
+          "currency": "EUR",
+          "due_date": "2027-07-23"
+        },
+        "expected": {
+          "reference": "DEMO-00453",
+          "amount": "473.53",
+          "currency": "EUR",
+          "due_date": "2027-07-23"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00454",
+        "prediction": "{\"reference\": \"DEMO-00454\", \"amount\": \"474.54\", \"currency\": \"USD\", \"due_date\": \"2027-07-24\"}",
+        "parsed": {
+          "reference": "DEMO-00454",
+          "amount": "474.54",
+          "currency": "USD",
+          "due_date": "2027-07-24"
+        },
+        "expected": {
+          "reference": "DEMO-00454",
+          "amount": "474.54",
+          "currency": "USD",
+          "due_date": "2027-07-24"
+        },
+        "exact_match": true
+      },
+      {
+        "id": "ROW-00455",
+        "prediction": "{\"reference\": \"DEMO-00455\", \"amount\": \"475.55\", \"currency\": \"EUR\", \"due_date\": \"2027-07-25\"}",
+        "parsed": {
+          "reference": "DEMO-00455",
+          "amount": "475.55",
+          "currency": "EUR",
+          "due_date": "2027-07-25"
+        },
+        "expected": {
+          "reference": "DEMO-00455",
+          "amount": "475.55",
+          "currency": "EUR",
+          "due_date": "2027-07-25"
+        },
+        "exact_match": true
+      }
+    ],
+    "generation_seconds": [
+      5.67282096200006,
+      4.033981729000061,
+      3.9797470869998506,
+      4.199956448000194,
+      4.7184100059998855,
+      4.67529453599991,
+      5.547750421999808,
+      4.775505342000088,
+      5.117058252999868,
+      5.047792703999676,
+      3.902225740999711,
+      4.802093345999765,
+      3.725424414000372,
+      4.702261146000183,
+      5.493796000000202,
+      4.772899993999999
+    ]
+  },
+  "elapsed_seconds": 732.701438754,
+  "adapter_files": {
+    "README.md": "17e4570d70233e27615dd746e889441c4761b6ed8be12b5c167a4802d23a5751",
+    "tokenizer.json": "3fd169731d2cbde95e10bf356d66d5997fd885dd8dbb6fb4684da3f23b2585d8",
+    "adapter_config.json": "3e4415753fdbaf197b0852b6fcb4737766816229fe456192c1a7535557e86486",
+    "tokenizer_config.json": "fbb05e8a722a05e92e8da2eabbb5820bbdd0d1482351a38cb14efa52fc8bdadb",
+    "adapter_model.safetensors": "0698ed7fcae07e57c1cb236ff93cb948756a96bdf75d6d3e1b2292687f844f2c",
+    "chat_template.jinja": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f"
+  }
+}
